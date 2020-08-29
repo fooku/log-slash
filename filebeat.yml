@@ -10,5 +10,6 @@ filebeat.inputs:
         - /usr/share/filebeat/logs/*
         
 output.elasticsearch:
-  hosts: ["http://elasticsearch:9200"] 
-  
+  hosts: ["http://elasticsearch:9200"]
+  username: elastic
+  password: youpassword

@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      discovery.type: single-node
+    networks:
+      - logstash
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.9.0
+    volumes:
+      - ${PWD}/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ${PWD}/logs/:/usr/share/filebeat/logs/
+    networks:
+      - logstash
+    depends_on: 
+      - elasticsearch
+    links:
+       - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.0
+    container_name: kibana
+    environment:
+        ELASTICSEARCH_URL: http://elasticsearch:9200" 
+    ports:
+      - "5601:5601"
+    depends_on: 
+      - elasticsearch
+    networks:
+      - logstash
+
+networks:
+  logstash:
+    driver: bridge
